@@ -19,7 +19,7 @@ const scraperObject = {
             console.log(`Navigating to ${urls[m]}`)
             await newPage.goto(urls[m])
             //await page.waitForSelector('h3.jobcat');
-            let name = await page.$$eval('jobcat', names => {
+            let name = await page.$$eval('h3.jobcat', names => {
                 names= names.map(em => em.innerHTML);
                 return names;
                 })
@@ -28,14 +28,17 @@ const scraperObject = {
             m++;
         }
         
+        await page.close();
+        await browser.close();
         const logger = fs.createWriteStream('Output.txt')
         let n = 0;
         while (name[n] != null){
             logger.write(`${name[n].replace(/\) \←/,')')}; ${urls[n]}\n`)
             n ++;}
         logger.close()
-        await browser.close();
+        // await browser.close();
     }
+    
 }
 
 module.exports = scraperObject;
