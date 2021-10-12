@@ -18,7 +18,6 @@ const scraperObject = {
             return names;
         });
         let jobdetailsgesammt= []; 
-        let names= [];
         let m = 0;
         while (urls[m] != null){
             let newPage = await browser.newPage();
@@ -42,7 +41,6 @@ const scraperObject = {
             logger.write(`${urls[n]}; ${name[n].replace(/\) \←/,')')}; ${jobdetailsgesammt[n]} \n`)
             n ++;}
         logger.close()
-         //await browser.close();
     }
     
 }
