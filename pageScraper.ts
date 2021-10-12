@@ -18,9 +18,9 @@ const scraperObject = {
             let newPage = await browser.newPage();
             console.log(`Navigating to ${urls[m]}`)
             await newPage.goto(urls[m])
-            //await page.waitForSelector('h3.jobcat');
-            let name = await page.$$eval('h3.jobcat', names => {
-                names= names.map(em => em.innerHTML);
+            await newPage.waitForSelector('.jobcat');
+            let name = await newPage.$$eval('h3.jobcat', names => {
+                names= names.map(em => em.innerText);
                 return names;
                 })
             console.log(name[m]);
@@ -32,7 +32,7 @@ const scraperObject = {
         await browser.close();
         const logger = fs.createWriteStream('Output.txt')
         let n = 0;
-        while (name[n] != null){
+        while (urls[n] != null){
             logger.write(`${name[n].replace(/\) \←/,')')}; ${urls[n]}\n`)
             n ++;}
         logger.close()
