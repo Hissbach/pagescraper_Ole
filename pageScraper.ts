@@ -8,34 +8,33 @@ const scraperObject = {
         let page = await browser.newPage();
         console.log(`Navigating to ${this.url}...`);
         await page.goto(this.url);
-        let scrapedData = [];
-        async function scrapeCurrentPage(){
         await page.waitForSelector('a.jobarticleteaser');
         let urls = await page.$$eval('a.jobarticleteaser', links => {
             links = links.map(el => el.getAttribute('href'));
             return links;
         });
-        
-        let name = await page.$$eval('a.jobarticleteaser', names => {
-            names= names.map(em => em.outerText);
-            return names;
-        })
-        let pagePromise = (link) => new Promise(async(resolve, reject) => {
-            let dataObj = {};
+        let m = 0; 
+        while (urls[m] != null){
             let newPage = await browser.newPage();
-            await newPage.goto(link);
-            await newPage.close()
-        }); 
+            console.log(`Navigating to ${urls[m]}`)
+            await newPage.goto(urls[m])
+            //await page.waitForSelector('h3.jobcat');
+            let name = await page.$$eval('jobcat', names => {
+                names= names.map(em => em.innerHTML);
+                return names;
+                })
+            console.log(name[m]);
+            await newPage.close();
+            m++;
+        }
+        
         const logger = fs.createWriteStream('Output.txt')
         let n = 0;
         while (name[n] != null){
-            logger.write(`${name[n].replace(/\) \←/,')')}; ${urls[n]}+\n`)
+            logger.write(`${name[n].replace(/\) \←/,')')}; ${urls[n]}\n`)
             n ++;}
         logger.close()
         await browser.close();
-        }
-        let data = await scrapeCurrentPage();
-        return data;
     }
 }
 
