@@ -13,30 +13,36 @@ const scraperObject = {
             links = links.map(el => el.getAttribute('href'));
             return links;
         });
-        let m = 0; 
+        let name = await page.$$eval('a.jobarticleteaser', names => {
+            names= names.map(em => em.outerText);
+            return names;
+        });
+        let jobdetailsgesammt= []; 
+        let names= [];
+        let m = 0;
         while (urls[m] != null){
             let newPage = await browser.newPage();
             console.log(`Navigating to ${urls[m]}`)
             await newPage.goto(urls[m])
             await newPage.waitForSelector('.jobcat');
-            let name = await newPage.$$eval('h3.jobcat', names => {
-                names= names.map(em => em.innerText);
-                return names;
-                })
-            console.log(name[m]);
+            let jobdetails = await newPage.$$eval('.jobrow-text', jobdetails => {
+                    jobdetails= jobdetails.map(em => em.innerText);
+                    return jobdetails;
+                    })
+            jobdetailsgesammt[m] = jobdetails.join(' '); 
             await newPage.close();
             m++;
-        }
-        
+                };
+
         await page.close();
         await browser.close();
         const logger = fs.createWriteStream('Output.txt')
         let n = 0;
         while (urls[n] != null){
-            logger.write(`${name[n].replace(/\) \←/,')')}; ${urls[n]}\n`)
+            logger.write(`${urls[n]}; ${name[n].replace(/\) \←/,')')}; ${jobdetailsgesammt[n]} \n`)
             n ++;}
         logger.close()
-        // await browser.close();
+         //await browser.close();
     }
     
 }
